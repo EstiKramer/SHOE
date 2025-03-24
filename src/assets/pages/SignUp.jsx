@@ -2,28 +2,72 @@
 import { Form, useForm } from "react-hook-form"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import { useState } from "react";
+import Snackbar from '@mui/material/Snackbar';
+import Slide from '@mui/material/Slide';
+
+
 
 import { addUser } from "../api/UserServicce"
 import { userIn } from "../../features/userSlice"
-const SignUp = () => {
+
+const SignUp = ({changec}) => {
     let dispatch = useDispatch()
     let navigate = useNavigate()
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
     let { register, handleSubmit, formState:{ errors } } = useForm()
+
 
     const saveRegister = (data) => {
         addUser(data).then(res =>{
-            dispatch(userIn(res.data))
+            const { token, user } = res.data;
+            dispatch(userIn({  user, token }))
+            changec(user.role)
+            changec(res.data.role)
             navigate("/list")
+            alert("נוסף בהצלחה")
         }).catch(err => {
-            console.log(err)
-            alert("eeerrr")
+            if(err.response && err.response.data && err.response.data.title === "User already exists"){
+                setSnackbarMessage("User already exists, , you are sending to Login")
+                setSnackbarOpen(true)
+                setTimeout(() => {
+                    console.log("Navigating to login...");
+                    navigate('/Login');
+                }, 2000);
+            return;}
+            console.error("שגיאה בתשובה:", err);
+            alert(err)
         })
 
     }
-    return (<form onSubmit={handleSubmit(saveRegister)}>
-<input type="text" {...register("userName",{required:{value:true,message:"username is required"}})} />
-<input type="text" {...register("password",{required:{value:true,message:"password is required"}})} />
-<input type="text" {...register("email",{required:{value:true,message:"email is required"}})} />
-    <input type="submit" /></form>)
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
+    };
+
+    return (<><form onSubmit={handleSubmit(saveRegister)}>
+<input type="text" placeholder="name" {...register("userName",{required:{value:true,message:"username is required"}})} />
+{errors.userName && <span>{errors.userName.message}</span>}
+
+<input type="text" placeholder="password" {...register("password",{required:{value:true,message:"password is required"}})} />
+{errors.password && <span>{errors.password.message}</span>}
+
+<input type="text"  placeholder="email" {...register("email",{required:{value:true,message:"email is required"}})} />
+{errors.email && <span>{errors.email.message}</span>}
+
+    <input type="submit" /></form>
+
+             <div>
+          <Snackbar
+            open={snackbarOpen}
+            onClose={handleCloseSnackbar}
+            TransitionComponent={Slide}
+            message={snackbarMessage}
+            // key={state.Transition.name}
+            autoHideDuration={3000}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          />
+            </div></>)
+    
 }
 export default SignUp;

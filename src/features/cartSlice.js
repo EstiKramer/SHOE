@@ -10,20 +10,21 @@ const cartSlice = createSlice({
     initialState,
     reducers: {
         addToCart: (state, action) => {
-            let index = state.arr.findIndex(item=>item._id == action.payload)
+            const {product, size} = action.payload;
+            let index = state.arr.findIndex(item=>item._id == product._id)
             if (index > -1)
                 state.arr[index].qty++;
             else
                 state.arr.push({ ...action.payload, qty: 1 })
-            state.sum=sum+action.payload.price
+            state.sum+=product.price
             state.count++},
         removeFromCart:(state, action)=>{
-            state.arr = state.arr.filter(item=>item_id!=action.payload)
+            state.arr = state.arr.filter(item=>item_id!=action.payload._id)
             state.sum-=action.payload.price
             state.count-- 
         },
         reduceFromCart: (state, action)=>{
-            let index = state.arr.findIndex(item=>item._id == action.payload)
+            let index = state.arr.findIndex(item=>item._id == action.payload._id)
             if(state[index].qty==1)
                 state.arr.slice(index,1)
             else
