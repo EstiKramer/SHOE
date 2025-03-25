@@ -11,7 +11,7 @@ import Slide from '@mui/material/Slide';
 import { addUser, login } from "../api/UserServicce"
 import { userIn } from "../../features/userSlice"
 
-const Login = ({changec}) => {
+const Login = () => {
     let dispatch = useDispatch()
     let navigate = useNavigate()
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -21,12 +21,11 @@ const Login = ({changec}) => {
     const saveRegister = (data) => {
         console.log("Sending data to login:", data);
         login(data.email, data.password).then(res =>{
-            console.log("API response:", res.data); // כאן תוודא שהנתונים נכונים
-
+            console.log("API response:", res.data); 
             const { token, user } = res.data;
             console.log("🔹 Login request received:", res.data);
             dispatch(userIn({ user, token }))
-            changec(user.role)
+            localStorage.setItem("user", JSON.stringify(user));
             setSnackbarMessage("Login successful")
             setSnackbarOpen(true);
             navigate("/list")
@@ -43,8 +42,9 @@ const Login = ({changec}) => {
                     setSnackbarMessage("wrong password")
                     setSnackbarOpen(true);
                 }
+                else{
                 setSnackbarMessage("An error occurred");
-                setSnackbarOpen(true);
+                setSnackbarOpen(true);}
         })
     }
     const handleCloseSnackbar = () => {

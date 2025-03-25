@@ -8,7 +8,8 @@ import { useNavigate } from "react-router-dom";
 const Cart = () =>{
     const navigate = useNavigate();
     const arr = useSelector((state)=>state.cart.arr);
-    const role = useSelector((state)=>state.currentUser.role);
+    const role = useSelector((state)=>state.user.currentUser?.role)||"guest"
+
 
     return(<>
     <div>
@@ -17,9 +18,9 @@ const Cart = () =>{
         <button onClick={()=>{
             if(role=="guest"){
                 alert("you need login")
-            navigate("/login")}
-        else if(c=="user"){
-            navigate("/checkout")
+            navigate('/Login')}
+        else if(role=="user"){
+            navigate('/Checkout')
         }}}>Checkout</button>
         </>)
 }

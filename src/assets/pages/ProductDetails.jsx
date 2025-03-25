@@ -77,9 +77,6 @@ const ProductDetails=()=>{
             </Box>
             } 
             </>
-
-            
-
     )
 }
 export default ProductDetails;

@@ -26,6 +26,7 @@ export default function Checkout() {
     const [details, setDetails] = useState();
     const products = useSelector((state)=> state.cart.arr)
     const userId = useSelector((state)=>state.user.currentUser?.id)
+    
     const finallPrice = useSelector((state)=>state.cart.sum)
     const token = useSelector((state)=>state.user.token)
     const totalPrice = finallPrice+25
@@ -84,12 +85,7 @@ export default function Checkout() {
 
             }
             
-            // addOrder(details)
-            // .then(res =>{
-            //     alert("The order has been placed")
-            // }).catch(err => {
-            //     alert(err)
-            // })
+         
     }
         
   

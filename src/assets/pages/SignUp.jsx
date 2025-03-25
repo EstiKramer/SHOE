@@ -6,12 +6,10 @@ import { useState } from "react";
 import Snackbar from '@mui/material/Snackbar';
 import Slide from '@mui/material/Slide';
 
-
-
 import { addUser } from "../api/UserServicce"
 import { userIn } from "../../features/userSlice"
 
-const SignUp = ({changec}) => {
+const SignUp = () => {
     let dispatch = useDispatch()
     let navigate = useNavigate()
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -23,8 +21,6 @@ const SignUp = ({changec}) => {
         addUser(data).then(res =>{
             const { token, user } = res.data;
             dispatch(userIn({  user, token }))
-            changec(user.role)
-            changec(res.data.role)
             navigate("/list")
             alert("נוסף בהצלחה")
         }).catch(err => {
@@ -36,7 +32,9 @@ const SignUp = ({changec}) => {
                     navigate('/Login');
                 }, 2000);
             return;}
-            console.error("שגיאה בתשובה:", err);
+            // console.error("שגיאה בתשובה:", err);
+            setSnackbarMessage("There was an error, please try again.");
+            setSnackbarOpen(true);
             alert(err)
         })
 

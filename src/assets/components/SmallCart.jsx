@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import Cart from "../pages/Cart";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const SmallCart = ({changeOnClose, onclose}) => {
+    const navigate = useNavigate()
     const arr = useSelector((state)=>state.cart.arr);
     const sum = useSelector((state)=>state.cart.sum);
     const cnt = useSelector((state)=>state.cart.count);
@@ -10,11 +12,11 @@ const SmallCart = ({changeOnClose, onclose}) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             changeOnClose(false);
-        }, 3000);
+        }, 1500);
         return () => clearTimeout(timer)
     },[onclose])
 
-return(<div style={styles.alertBox}>
+return(<div onClick={()=>navigate('/cart')} style={styles.alertBox}>
  
    
         {arr.map((item,index)=>(<div key ={index}><img width="50" height="50" src={item.product.imagePath} alt={item.product.productName}/><p>{item.product.productName}</p></div>))}

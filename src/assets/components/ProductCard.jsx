@@ -10,6 +10,7 @@ const ProductCard = ({ productt }) => {
   const {product, qty, size} = productt
   const dispatch = useDispatch()
   const {
+    _id,
     productName,
     description,
     DateOfManufacture,
@@ -35,7 +36,7 @@ const ProductCard = ({ productt }) => {
         <p className="product-quantity">Quantity: {qty}</p>
         <p className="product-total">Total: ${totalPrice}</p>
         <button onClick={()=>{dispatch(addToCart({product:product,size:size}))}}>+</button>
-        <button onClick={()=>{dispatch(reduceFromCart({product:product,qty:qty}))}}>-</button>
+        <button onClick={()=>{dispatch(reduceFromCart({product: product, qty: qty}))}}>-</button>
         <button onClick={()=>{dispatch(removeFromCart(productt))}}>delete</button>
       </div>
       {/* <button onClick={()=>{navigate('/Checkout')}}>Checkout</button> */}

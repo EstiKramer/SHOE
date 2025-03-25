@@ -15,9 +15,13 @@ import ManagerNavbar from './assets/components/ManagerNavbar.jsx'
 import Cart from './assets/pages/Cart.jsx'
 import UpdateProduct from './assets/pages/UpdateProduct.jsx'
 import AddProduct from './assets/pages/AddProduct.jsx'
+import { useSelector } from 'react-redux'
 
 
 function App() {
+  const role = useSelector((state)=>state.user.currentUser?.role)||"guest"
+  const arr = useSelector((state)=>state.cart.arr)
+
 const [flag, setflag] =useState(false)
 const [c, setc] = useState("guest")
 const product =   {
@@ -42,25 +46,33 @@ const product =   {
 function changeflag(flag){
   setflag(flag)
 }
-function changec(c){
-  setc(c);
-}
+// localStorage.setItem("sum",0)
+// localStorage.setItem("count",0)
+// localStorage.setItem("arr",[])
+// localStorage.removeItem("cart");
+
+
 
   return (
     <>
-    {c=="guest"&&<GuestNavbar />}
-    {c=="user"&&<UserNavbar />}
-    {c=="admin"&&<ManagerNavbar />} 
+    {role=="guest"&&<GuestNavbar />}
+    {role=="user"&&<UserNavbar />}
+    {role=="admin"&&<ManagerNavbar />} 
     <Routes>
-      <Route path="/Login" element={<Login changec = {changec}/>} />
-      <Route path="/Signup" element={ <SignUp changec = {changec}/>} />
+      <Route path="/Login" element={<Login />} />
+      <Route path="/Signup" element={ <SignUp />} />
       <Route path="/list" element={ <ProductList changeflag={changeflag}/>} />
       <Route path="/addProduct" element={ <AddProduct />} />
       <Route path="/updateProduct/:id" element={ <UpdateProduct/>} />
       <Route path="/list/product/:id" element={<ProductDetails />} />
       <Route path="/Checkout" element={<Checkout/>} />
+      {arr? (
+    <Route path="/cart" element={<Cart role={role} />} />
+      ) : (
+    <Route path="/cart" element={<p>The cart is empty</p>} />
+    )}
 
-      {flag?<Route path="/cart" element={<Cart c={c}/>} />:<div><p>the cart empty</p></div>}
+      {/* {flag?<Route path="/cart" element={<Cart role={role}/>} />:<div><p>the cart empty</p></div>} */}
 
       {/* {flag&&<Route path="/cart" element={<Cart />} />} */}
       </Routes>
