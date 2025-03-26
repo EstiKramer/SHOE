@@ -44,11 +44,14 @@ const SignUp = () => {
         setShowPassword(!showPassword);
     };
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (ddata) => {
+        // console.log("Form submitted:", data);
+
         setLoading(true);
         
         try {
-            const res = await addUser(data);
+            console.log("aaa",ddata)
+            const res = await addUser(ddata);
             console.log("Signup response:", res);
             
             const { token, data } = res.data;
