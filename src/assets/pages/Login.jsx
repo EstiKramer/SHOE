@@ -44,7 +44,10 @@ const Login = () => {
                 }
                 else{
                 setSnackbarMessage("An error occurred");
-                setSnackbarOpen(true);}
+                setSnackbarOpen(true);
+                console.log("errr", err)
+            }
+
         })
     }
     const handleCloseSnackbar = () => {

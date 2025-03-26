@@ -20,7 +20,7 @@ import { useSelector } from 'react-redux'
 
 function App() {
   const role = useSelector((state)=>state.user.currentUser?.role)||"guest"
-  const arr = useSelector((state)=>state.cart.arr)
+  const cart = useSelector((state)=>state.cart)
 
 const [flag, setflag] =useState(false)
 const [c, setc] = useState("guest")
@@ -49,9 +49,9 @@ function changeflag(flag){
 // localStorage.setItem("sum",0)
 // localStorage.setItem("count",0)
 // localStorage.setItem("arr",[])
-// localStorage.removeItem("cart");
+localStorage.removeItem("arr");
 
-
+// localStorage.setItem("user",null)
 
   return (
     <>
@@ -66,7 +66,7 @@ function changeflag(flag){
       <Route path="/updateProduct/:id" element={ <UpdateProduct/>} />
       <Route path="/list/product/:id" element={<ProductDetails />} />
       <Route path="/Checkout" element={<Checkout/>} />
-      {arr? (
+      {(cart.sum != 0)? (
     <Route path="/cart" element={<Cart role={role} />} />
       ) : (
     <Route path="/cart" element={<p>The cart is empty</p>} />

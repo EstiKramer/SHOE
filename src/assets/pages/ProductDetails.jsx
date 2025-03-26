@@ -13,6 +13,8 @@ import "./ProductDetails.scss"
 
 const ProductDetails=()=>{
     const token = useSelector((state)=>state.user.token)
+    const role = useSelector((state)=>state.user.currentUser?.role)||"guest"
+
     const [details, setDetails] = useState(null)
     let {id} = useParams();
     let navigate = useNavigate();
@@ -64,7 +66,7 @@ const ProductDetails=()=>{
             <button className="back-button" onClick={() => navigate(-1)}>חזרה</button>
             </div>
             
-            {details.role=="admin"&&
+            {role=="admin"&&
             <Box sx={{ '& > :not(style)': { m: 1 } }}>
             <Fab sx={{ backgroundColor: "darkblue", color: "white" }} aria-label="edit"
             onClick={()=> navigate(`/updateProduct/${details._id}`)}>

@@ -19,8 +19,9 @@ const SignUp = () => {
 
     const saveRegister = (data) => {
         addUser(data).then(res =>{
+            console.log("res:", res)
             const { token, user } = res.data;
-            dispatch(userIn({  user, token }))
+            dispatch(userIn({ user, token }))
             navigate("/list")
             alert("נוסף בהצלחה")
         }).catch(err => {
@@ -44,7 +45,7 @@ const SignUp = () => {
     };
 
     return (<><form onSubmit={handleSubmit(saveRegister)}>
-<input type="text" placeholder="name" {...register("userName",{required:{value:true,message:"username is required"}})} />
+<input type="text" placeholder="name" {...register("username",{required:{value:true,message:"username is required"}})} />
 {errors.userName && <span>{errors.userName.message}</span>}
 
 <input type="text" placeholder="password" {...register("password",{required:{value:true,message:"password is required"}})} />

@@ -1,10 +1,17 @@
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import {userOut} from "../../features/userSlice"
+import { clearCart } from "../../features/cartSlice";
 
 const ManagerNavbar = () => {
+  const dispatch = useDispatch()
 
   function Logout(){
+    
     dispatch(userOut());  
     dispatch(clearCart());
+    
   }
   return (
     <nav>
