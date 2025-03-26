@@ -66,9 +66,9 @@ const ProductCard = ({ productt }) => {
         <Divider sx={{ my: 2 }} />
         
         <Box className="product-details">
-          <Typography variant="body1" className="product-price">
+          {/* <Typography variant="body1" className="product-price">
             ${price} per unit
-          </Typography>
+          </Typography> */}
           
           <Chip 
             label={`Size: ${size}`}
