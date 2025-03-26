@@ -1,72 +1,244 @@
-
-import { Form, useForm } from "react-hook-form"
-import { useDispatch } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
-import Snackbar from '@mui/material/Snackbar';
-import Slide from '@mui/material/Slide';
+import { addUser } from "../api/UserServicce";
+import { userIn } from "../../features/userSlice";
+import "../styles/Auth.scss";
 
-import { addUser } from "../api/UserServicce"
-import { userIn } from "../../features/userSlice"
+// MUI imports
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import PersonIcon from '@mui/icons-material/Person';
+import EmailIcon from '@mui/icons-material/Email';
+import LockIcon from '@mui/icons-material/Lock';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const SignUp = () => {
-    let dispatch = useDispatch()
-    let navigate = useNavigate()
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
-    let { register, handleSubmit, formState:{ errors } } = useForm()
+    const [snackbarSeverity, setSnackbarSeverity] = useState("info");
+    
+    const { 
+        register, 
+        handleSubmit, 
+        formState: { errors }
+    } = useForm();
 
+    const handlePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
 
-    const saveRegister = (data) => {
-        addUser(data).then(res =>{
-            console.log("res:", res)
+    const onSubmit = async (data) => {
+        setLoading(true);
+        
+        try {
+            const res = await addUser(data);
+            console.log("Signup response:", res);
+            
             const { token, user } = res.data;
-            dispatch(userIn({ user, token }))
-            navigate("/list")
-            alert("נוסף בהצלחה")
-        }).catch(err => {
-            if(err.response && err.response.data && err.response.data.title === "User already exists"){
-                setSnackbarMessage("User already exists, , you are sending to Login")
-                setSnackbarOpen(true)
-                setTimeout(() => {
-                    console.log("Navigating to login...");
-                    navigate('/Login');
-                }, 2000);
-            return;}
-            // console.error("שגיאה בתשובה:", err);
-            setSnackbarMessage("There was an error, please try again.");
+            dispatch(userIn({ user, token }));
+            
+            setSnackbarSeverity("success");
+            setSnackbarMessage("Account created successfully");
             setSnackbarOpen(true);
-            alert(err)
-        })
+            
+            setTimeout(() => {
+                navigate("/list");
+            }, 1500);
+            
+        } catch (err) {
+            console.error("Signup error:", err);
+            
+            if (err.response && err.response.data) {
+                const { title } = err.response.data;
+                
+                if (title === "User already exists") {
+                    setSnackbarSeverity("info");
+                    setSnackbarMessage("User already exists, redirecting to login...");
+                    setSnackbarOpen(true);
+                    
+                    setTimeout(() => {
+                        navigate('/Login');
+                    }, 2000);
+                    
+                } else {
+                    setSnackbarSeverity("error");
+                    setSnackbarMessage("Signup failed: " + (title || "Unknown error"));
+                    setSnackbarOpen(true);
+                }
+                
+            } else {
+                setSnackbarSeverity("error");
+                setSnackbarMessage("Network error, please try again");
+                setSnackbarOpen(true);
+            }
+            
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    }
-    const handleCloseSnackbar = () => {
+    const handleSnackbarClose = () => {
         setSnackbarOpen(false);
     };
 
-    return (<><form onSubmit={handleSubmit(saveRegister)}>
-<input type="text" placeholder="name" {...register("username",{required:{value:true,message:"username is required"}})} />
-{errors.userName && <span>{errors.userName.message}</span>}
+    return (
+        <Container maxWidth="sm" className="auth-container">
+            <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+                <Box className="auth-header">
+                    <Typography variant="h4" component="h1" gutterBottom color="primary">
+                        Sign Up
+                    </Typography>
+                    <Typography variant="body1" className="auth-subtitle">
+                        Create a new account to start shopping
+                    </Typography>
+                </Box>
 
-<input type="text" placeholder="password" {...register("password",{required:{value:true,message:"password is required"}})} />
-{errors.password && <span>{errors.password.message}</span>}
+                <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
+                    <Box className="form-group">
+                        <TextField
+                            fullWidth
+                            id="username"
+                            label="Username"
+                            variant="outlined"
+                            error={!!errors.username}
+                            helperText={errors.username?.message}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <PersonIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            {...register("username", {
+                                required: "Username is required",
+                                minLength: {
+                                    value: 3,
+                                    message: "Username must be at least 3 characters"
+                                }
+                            })}
+                        />
+                    </Box>
 
-<input type="text"  placeholder="email" {...register("email",{required:{value:true,message:"email is required"}})} />
-{errors.email && <span>{errors.email.message}</span>}
+                    <Box className="form-group">
+                        <TextField
+                            fullWidth
+                            id="email"
+                            label="Email"
+                            variant="outlined"
+                            error={!!errors.email}
+                            helperText={errors.email?.message}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <EmailIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            {...register("email", {
+                                required: "Email is required",
+                                pattern: {
+                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                    message: "Invalid email address"
+                                }
+                            })}
+                        />
+                    </Box>
 
-    <input type="submit" /></form>
+                    <Box className="form-group">
+                        <TextField
+                            fullWidth
+                            id="password"
+                            label="Password"
+                            variant="outlined"
+                            type={showPassword ? "text" : "password"}
+                            error={!!errors.password}
+                            helperText={errors.password?.message}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <LockIcon />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handlePasswordVisibility}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            {...register("password", {
+                                required: "Password is required",
+                                minLength: {
+                                    value: 6,
+                                    message: "Password must be at least 6 characters"
+                                }
+                            })}
+                        />
+                    </Box>
 
-             <div>
-          <Snackbar
-            open={snackbarOpen}
-            onClose={handleCloseSnackbar}
-            TransitionComponent={Slide}
-            message={snackbarMessage}
-            // key={state.Transition.name}
-            autoHideDuration={3000}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          />
-            </div></>)
-    
-}
+                    <Box className="auth-actions">
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            fullWidth
+                            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <PersonAddIcon />}
+                            disabled={loading}
+                        >
+                            {loading ? "Creating Account..." : "Sign Up"}
+                        </Button>
+                    </Box>
+
+                    <Box className="redirect-link">
+                        <Typography variant="body2">
+                            Already have an account?{" "}
+                            <Link to="/Login">
+                                Login
+                            </Link>
+                        </Typography>
+                    </Box>
+                </form>
+            </Paper>
+            
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert 
+                    onClose={handleSnackbarClose} 
+                    severity={snackbarSeverity} 
+                    sx={{ width: '100%' }}
+                >
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+        </Container>
+    );
+};
+
 export default SignUp;
