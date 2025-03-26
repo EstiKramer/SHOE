@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import{  Router, Route, Routes} from 'react-router-dom'
@@ -16,11 +16,21 @@ import Cart from './assets/pages/Cart.jsx'
 import UpdateProduct from './assets/pages/UpdateProduct.jsx'
 import AddProduct from './assets/pages/AddProduct.jsx'
 import { useSelector } from 'react-redux'
+import { userIn } from './features/userSlice.js'
+import { useDispatch } from 'react-redux'
 
 
 function App() {
+  const dispatch = useDispatch()
   const role = useSelector((state)=>state.user.currentUser?.role)||"guest"
   const cart = useSelector((state)=>state.cart)
+  useEffect(() => {
+    const userFromStorage = localStorage.getItem("user");
+    const data = (userFromStorage && userFromStorage !== "undefined") ? JSON.parse(userFromStorage) : null;
+    const token = localStorage.getItem("user")||null;
+    
+    dispatch(userIn({data, token})); 
+}, []);
 
 const [flag, setflag] =useState(false)
 const [c, setc] = useState("guest")

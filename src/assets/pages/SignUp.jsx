@@ -51,8 +51,8 @@ const SignUp = () => {
             const res = await addUser(data);
             console.log("Signup response:", res);
             
-            const { token, user } = res.data;
-            dispatch(userIn({ user, token }));
+            const { token, data } = res.data;
+            dispatch(userIn({ data, token }));
             
             setSnackbarSeverity("success");
             setSnackbarMessage("Account created successfully");

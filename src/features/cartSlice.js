@@ -127,11 +127,21 @@ const cartSlice = createSlice({
 
         removeFromCart: (state, action) => {
             // סינון המוצר מהעגלה
-            state.arr = state.arr.filter(item => item.product._id !== action.payload.product._id );
-            // עדכון הסכום ומספר המוצרים
-            state.sum -= action.payload.product.price;
-            state.count--; 
+            // const product = state.arr.find(item => item.product._id === action.payload.product._id);
+            let index = state.arr.findIndex(item => item.product._id === action.payload.product._id);
 
+            // state.arr = state.arr.filter(item => item.product._id !== action.payload.product._id );
+            // עדכון הסכום ומספר המוצרים
+            // state.sum = state.sum-(action.payload.product.price*action.payload.product.qty);
+            // state.count=state.count-action.payload.product.qty; 
+            if (index > -1) {
+                // מפחיתים את הסכום ואת הכמות בצורה תקינה
+                state.sum -= state.arr[index].product.price * state.arr[index].qty;
+                state.count -= state.arr[index].qty;
+        
+                // מוחקים את המוצר מהמערך
+                state.arr.splice(index, 1);
+            }
             // עדכון ב-localStorage
             localStorage.setItem("cart", JSON.stringify(state.arr));
             localStorage.setItem("sum", state.sum);

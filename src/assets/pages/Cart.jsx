@@ -30,6 +30,7 @@ const Cart = () => {
     const role = useSelector((state) => state.user.currentUser?.role) || "guest";
     
     const handleCheckout = () => {
+        console.log(role)
         if (role === "guest") {
             setSnackbarMessage("You need to login first");
             setSnackbarOpen(true);
